@@ -1,70 +1,221 @@
-# Getting Started with Create React App
+# 🎮 Jogo da Velha - Desafio Técnico
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Um jogo da velha interativo desenvolvido em React puro com funcionalidades avançadas de personalização, temporização e sistema de pontuação.
 
-## Available Scripts
+## 📋 Visão Geral do Projeto
 
-In the project directory, you can run:
+Este projeto implementa um jogo da velha (Tic Tac Toe) completo com as seguintes funcionalidades principais:
 
-### `npm start`
+- **Jogo interativo**: Interface responsiva e intuitiva
+- **Sistema de pontuação**: Acompanha vitórias até 11 partidas para determinar o campeão
+- **Temporizador por jogada**: 5 segundos por turno com jogada automática
+- **Personalização de cores**: Menu flutuante para customizar toda a paleta visual
+- **Feedback visual**: Animações e transições suaves
+- **Acessibilidade**: Labels apropriados e navegação por teclado
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🏗️ Estrutura de Pastas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+src/
+├── App.js                  # Componente principal do jogo
+├── hooks/
+│   ├── useGameState.js     # Hook customizado para lógica do jogo
+│   └── useTheme.js         # Hook customizado para gerenciamento de cores
+├── components/
+│   ├── Board.js            # Componente do tabuleiro
+│   ├── Cell.js             # Componente de célula individual
+│   ├── Timer.js            # Componente do temporizador
+│   ├── ScoreBoard.js       # Componente do placar
+│   └── CustomizationMenu.js # Menu de personalização
+└── styles/
+    └── animations.css      # Animações CSS customizadas
+```
 
-### `npm test`
+*Nota: Nesta implementação, todos os componentes estão organizados em um único arquivo para facilitar a visualização, mas em um projeto real seriam separados conforme a estrutura acima.*
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🔧 Decisões Técnicas
 
-### `npm run build`
+### **Hooks Customizados**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### `useGameState`
+- **Responsabilidade**: Gerencia todo o estado do jogo (tabuleiro, jogador atual, pontuação, timer)
+- **Justificativa**: Centraliza a lógica de negócios e facilita a manutenção
+- **Funcionalidades**:
+  - Controle de turnos e validação de jogadas
+  - Detecção de vitória e empate
+  - Sistema de pontuação acumulativa
+  - Integração com o temporizador
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### `useTheme`
+- **Responsabilidade**: Gerencia as cores personalizáveis da interface
+- **Justificativa**: Permite customização em tempo real sem re-renderizações desnecessárias
+- **Funcionalidades**:
+  - Estado das cores (X, O, tabuleiro, fundo, células)
+  - Função de atualização de cores individuais
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **Arquitetura de Componentes**
 
-### `npm run eject`
+#### Separação de Responsabilidades
+- **`App`**: Componente container principal, orquestra todos os outros
+- **`Board`**: Renderiza o grid 3x3 e delega cliques para as células
+- **`Cell`**: Componente apresentacional puro, sem lógica de negócio
+- **`Timer`**: Exibe countdown com feedback visual para urgência
+- **`ScoreBoard`**: Mostra pontuação e detecta vitória do campeonato
+- **`CustomizationMenu`**: Menu flutuante para personalização visual
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Padrões Utilizados
+- **Container/Presenter**: Separação clara entre lógica e apresentação
+- **Composition**: Componentes reutilizáveis e compostos
+- **Single Responsibility**: Cada componente tem uma única responsabilidade
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### **Gerenciamento de Estado**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Estado Local vs Global
+- **Local**: Usado para estados específicos de componentes (menu aberto/fechado)
+- **Hooks customizados**: Para estados compartilhados entre múltiplos componentes
+- **Justificativa**: Evita over-engineering com bibliotecas externas mantendo simplicidade
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Otimizações de Performance
+- **useCallback**: Memoização de funções para evitar re-criações desnecessárias
+- **Shallow comparison**: Estado imutável para otimizar re-renderizações
+- **Event delegation**: Manipulação eficiente de eventos no tabuleiro
 
-## Learn More
+### **Temporizador e Jogadas Automáticas**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Implementação
+- **useEffect** com `setInterval` para countdown
+- **Cleanup** adequado para evitar memory leaks
+- **Jogada aleatória** em células vazias quando o tempo expira
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Considerações
+- Timer pausado durante game over
+- Reset automático do timer a cada jogada
+- Feedback visual quando restam 2 segundos
 
-### Code Splitting
+### **Personalização Visual**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### Menu Flutuante
+- **Posição fixa**: Não interfere com o layout do jogo
+- **Transições CSS**: Movimento suave de entrada/saída
+- **Color inputs**: Interface nativa do browser para seleção de cores
 
-### Analyzing the Bundle Size
+#### Sistema de Cores
+- **CSS-in-JS**: Aplicação dinâmica de cores via props
+- **Hover effects**: Feedback visual em botões e células
+- **Consistent theming**: Paleta coesa em toda a aplicação
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🚀 Instruções de Build e Execução
 
-### Making a Progressive Web App
+### Pré-requisitos
+- Node.js (versão 14 ou superior)
+- npm ou yarn
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Instalação e Execução
 
-### Advanced Configuration
+```bash
+# Clone o repositório
+git clone https://github.com/pabloherzberg/jogo-da-velha.git
+cd jogo-da-velha
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# Instale as dependências
+npm install
 
-### Deployment
+# Execute em modo de desenvolvimento
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Build para produção
+npm run build
 
-### `npm run build` fails to minify
+# Execute os testes
+npm test
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Deploy
+O projeto pode ser facilmente deployado em:
+- **Netlify**: `npm run build` + drag & drop da pasta `build`
+- **Vercel**: Conectar repositório Git
+- **GitHub Pages**: Configurar workflow para build automático
+
+## 🎯 Funcionalidades Implementadas
+
+### ✅ Requisitos Obrigatórios
+- [x] **Linguagem**: JavaScript puro (sem TypeScript)
+- [x] **Hooks personalizados**: `useGameState` e `useTheme`
+- [x] **Tipagem de elementos**: PropTypes e JSDoc para documentação
+- [x] **Sem bibliotecas externas**: Apenas React puro
+- [x] **Menu flutuante**: Personalização de cores em tempo real
+- [x] **Temporizador**: 5 segundos por jogada com auto-play
+- [x] **Cálculo de resultado**: Detecção de vitória, empate e pontuação
+- [x] **Área de pontuação**: Sistema de 11 vitórias para campeonato
+- [x] **Documentação**: README completo
+- [x] **Git repository**: Código versionado
+
+### 🌟 Diferenciais Implementados
+- [x] **Hooks nativos criativos**: `useEffect` para timer, `useCallback` para otimização
+- [x] **Organização por responsabilidades**: Arquitetura modular e escalável  
+- [x] **Separação lógica/apresentação**: Pattern Container/Presenter
+- [x] **Estilização coesa**: Sistema de cores consistente
+- [x] **Acessibilidade**: Labels ARIA e navegação por teclado
+- [x] **UX aprimorada**: Animações, hover effects e responsividade
+
+## 🧪 Decisões de UX/UI
+
+### Interface Intuitiva
+- **Feedback visual**: Células highlight no hover
+- **Estados claros**: Indicação visual do jogador atual
+- **Animações sutis**: Transições suaves sem causar distração
+
+### Responsividade
+- **Flexbox**: Layout adaptável a diferentes tamanhos de tela
+- **Mobile-first**: Interface otimizada para dispositivos móveis
+- **Touch-friendly**: Botões com tamanho adequado para toque
+
+### Acessibilidade
+- **Semantic HTML**: Estrutura semântica adequada
+- **ARIA labels**: Descrições para screen readers
+- **Contrast**: Cores com contraste adequado
+- **Keyboard navigation**: Navegação completa por teclado
+
+## 🔄 Fluxo do Jogo
+
+1. **Início**: Jogador X sempre começa, timer ativado
+2. **Jogada**: Click na célula ou auto-play quando timer expira
+3. **Validação**: Verificação de vitória ou empate
+4. **Pontuação**: Atualização do placar após cada partida  
+5. **Campeonato**: Primeiro a 11 vitórias é declarado campeão
+6. **Reset**: Novo jogo mantém pontuação, reset manual limpa tudo
+
+## 🎨 Personalização
+
+O menu flutuante (ícone 🎨) permite customizar:
+- **Cor do X**: Cor das jogadas do jogador X
+- **Cor do O**: Cor das jogadas do jogador O  
+- **Cor do Tabuleiro**: Cor das bordas e divisórias
+- **Cor de Fundo**: Cor de fundo da aplicação
+- **Cor das Células**: Cor de fundo das células vazias
+
+## 📊 Métricas de Qualidade
+
+- **Performance**: Renderizações otimizadas com hooks memoizados
+- **Manutenibilidade**: Código modular e bem documentado
+- **Testabilidade**: Lógica separada da apresentação
+- **Acessibilidade**: Conformidade com padrões WCAG
+- **Responsividade**: Suporte a múltiplos dispositivos
+
+## 🚀 Próximos Passos
+
+Possíveis melhorias futuras:
+- Modo multiplayer online
+- Diferentes tamanhos de tabuleiro (4x4, 5x5)
+- Sistema de ranking persistente
+- Tema dark/light mode
+- Análise de jogadas com IA
+- Histórico de partidas
+
+---
+
+**Desenvolvido com ❤️ usando React puro**
+
+Teste usando este link da vercel
+
+https://jogo-da-velha-gamma-five.vercel.app/
